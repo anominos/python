@@ -36,42 +36,37 @@ class Player:
 
 class Ground:#binary-representing-like
     def __init__(self):
-        self.pixels = "0"  #formatted: length of width (2 digits), width (length of width digits), data (len(data)//width(<- heigth) * width)
-
+        self.data = "0"  #formatted: length of width (2 digits), width (length of width digits), data (len(data)//width(<- heigth) * width)
+        self.width = 0
     def createground(self):
         random1 = 1001110100
         random2 = 1110100111
         for r in range(random.randint(10, 50)):
             random1, random2 = int("1"+bin(random1|random2)[-10:]), int("1"+bin(random1&random2)[-10:])
-        width=str(screenwidth//playersize)
-        height=str(screenheight//playersize)
-        metalength=str(len(width))
-        while len(metalength)<2:
-            metalength="0"+metalength
+        self.width=screenwidth//playersize
+        height=screenheight//playersize
+
         groundtypes = {"0":"walk",
                        "1":"grass",
                        "2":"obstacle"}
         data = []
-        for x in range(int(width)*int(height)):
-            if x < int(width) or x%int(width)==0 or (x+1)%int(width)==0 or x > int(width)*(int(height)-1):
+        for x in range(self.width*height):
+            if x < self.width or x%self.width==0 or (x+1)%self.width==0 or x > self.width*(height-1):
                 data.append("2")
             else:
                 data.append("1")
-        data="".join(data)
-        self.pixels=metalength+width+data
+        self.data="".join(data)
     def drawground(self):
-        lengthwidth= int(self.pixels[:2])
-        width = int(self.pixels[2:lengthwidth+2])
-        startacr = (screenwidth-(width*playersize))//2
-        startver = (screenheight-(len(self.pixels)//width*playersize))//2
-        for index in range(lengthwidth+2, len(self.pixels)):
-            across=(index-lengthwidth-2)%width
-            vert = (index-lengthwidth-2)//width
-            if self.pixels[index]=="2":
+        startacr = (screenwidth-(self.width*playersize))//2
+        startver = (screenheight-(len(self.data)//self.width*playersize))//2
+        for index in range(len(self.data)):
+            across=index%self.width
+            vert = index//self.width
+            if self.data[index]=="2":
                 screen.blit(treepic, ((across*playersize)+startacr, (vert*playersize)+startver))
-            elif self.pixels[index]=="1":
+            elif self.data[index]=="1":
                 screen.blit(grasspic, ((across*playersize)+startacr, (vert*playersize)+startver))
-        print(startacr, startver)
+
 
 
 
