@@ -14,8 +14,8 @@ def displaytext(t, pos):
 
 
 playersize = 50
-treepic = pygame.image.load("tree.bmp")
-grasspic = pygame.image.load("grass.bmp")
+treepic = pygame.image.load("tree.bmp")#draw picture of tree
+grasspic = pygame.image.load("grass.bmp")#draw picture of grass
 
 
 class Player:
