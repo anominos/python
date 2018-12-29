@@ -14,8 +14,9 @@ def displaytext(t, pos):
 
 
 playersize = 50
-treepic = pygame.image.load("tree.bmp")#draw picture of tree
-grasspic = pygame.image.load("grass.bmp")#draw picture of grass
+treepic = pygame.image.load("tree.bmp")
+grasspic = pygame.image.load("grass.bmp")
+
 
 
 class Player:
@@ -36,13 +37,9 @@ class Player:
 
 class Ground:
     def __init__(self):
-        self.data = "0" 
+        self.data = "0"
         self.width = 0
     def createground(self):
-        random1 = 1001110100
-        random2 = 1110100111
-        for r in range(random.randint(10, 50)):
-            random1, random2 = int("1"+bin(random1|random2)[-10:]), int("1"+bin(random1&random2)[-10:])
         self.width=screenwidth//playersize
         height=screenheight//playersize
 
