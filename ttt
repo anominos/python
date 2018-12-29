@@ -1,0 +1,128 @@
+import pygame
+import time
+import random
+pygame.init()
+screenwidth = 1680
+screenheight = 840
+screen = pygame.display.set_mode((screenwidth, screenheight))
+done = False
+clock = pygame.time.Clock()
+def displaytext(t, pos):
+    font = pygame.font.SysFont('Calibri', 25, True, False)
+    text = font.render(t, True, pos)
+    screen.blit(text, [250, 250])
+
+
+playersize = 50
+treepic = pygame.image.load("tree.bmp")
+grasspic = pygame.image.load("grass.bmp")
+
+
+class Player:
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+    def move(self, direction):
+        if direction=="up":
+            self.y-=playersize
+        elif direction == "down":
+            self.y+=playersize
+        elif direction=="left":
+            self.x-=playersize
+        elif direction=="right":
+            self.x+=playersize
+    def checkgroud(self):
+        pass
+
+class Ground:#binary-representing-like
+    def __init__(self):
+        self.pixels = "0"  #formatted: length of width (2 digits), width (length of width digits), data (len(data)//width(<- heigth) * width)
+
+    def createground(self):
+        random1 = 1001110100
+        random2 = 1110100111
+        for r in range(random.randint(10, 50)):
+            random1, random2 = int("1"+bin(random1|random2)[-10:]), int("1"+bin(random1&random2)[-10:])
+        width=str(screenwidth//playersize)
+        height=str(screenheight//playersize)
+        metalength=str(len(width))
+        while len(metalength)<2:
+            metalength="0"+metalength
+        groundtypes = {"0":"walk",
+                       "1":"grass",
+                       "2":"obstacle"}
+        data = []
+        for x in range(int(width)*int(height)):
+            if x < int(width) or x%int(width)==0 or (x+1)%int(width)==0 or x > int(width)*(int(height)-1):
+                data.append("2")
+            else:
+                data.append("1")
+        data="".join(data)
+        self.pixels=metalength+width+data
+    def drawground(self):
+        lengthwidth= int(self.pixels[:2])
+        width = int(self.pixels[2:lengthwidth+2])
+        startacr = (screenwidth-(width*playersize))//2
+        startver = (screenheight-(len(self.pixels)//width*playersize))//2
+        for index in range(lengthwidth+2, len(self.pixels)):
+            across=(index-lengthwidth-2)%width
+            vert = (index-lengthwidth-2)//width
+            if self.pixels[index]=="2":
+                screen.blit(treepic, ((across*playersize)+startacr, (vert*playersize)+startver))
+            elif self.pixels[index]=="1":
+                screen.blit(grasspic, ((across*playersize)+startacr, (vert*playersize)+startver))
+        print(startacr, startver)
+
+
+
+
+ground=Ground()
+ground.createground()
+
+
+player = Player()
+dx = 0
+dy = 0
+while not done:
+    moved=False
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+        elif event.type==pygame.KEYDOWN:
+            if event.key==pygame.K_w:
+                dy = -1
+            elif event.key==pygame.K_a:
+                dx = -1
+            elif event.key==pygame.K_d:
+                dx = 1
+            elif event.key==pygame.K_s:
+                dy = 1
+            elif event.key==pygame.K_ESCAPE:
+                done = True
+        elif event.type==pygame.KEYUP:
+            if event.key==pygame.K_w:
+                dy = 0
+            elif event.key==pygame.K_a:
+                dx = 0
+            elif event.key==pygame.K_d:
+                dx = 0
+            elif event.key==pygame.K_s:
+                dy = 0
+
+    if dx == 1:
+        player.move("right")
+    if dx == -1:
+        player.move("left")
+    if dy == 1:
+        player.move("down")
+    if dy == -1:
+        player.move("up")
+    screen.fill((255, 255, 255))
+    ground.drawground()
+    pygame.draw.circle(screen, (0, 0, 0), ((playersize//2)+player.x, (playersize//2)+player.y), playersize//2)
+    pygame.display.flip()
+    clock.tick(60)
+
+
+pygame.display.quit()
+pygame.quit()
