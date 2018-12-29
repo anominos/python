@@ -1,6 +1,4 @@
-import pygame
-import time
-import random
+import pygame, time, random, os
 pygame.init()
 screenwidth = 1680
 screenheight = 840
@@ -54,6 +52,7 @@ class Ground:
                 data.append("1")
         self.data="".join(data)
     def drawground(self):
+        screen.fill([255, 255, 255])
         startacr = (screenwidth-(self.width*playersize))//2
         startver = (screenheight-(len(self.data)//self.width*playersize))//2
         for index in range(len(self.data)):
@@ -63,15 +62,17 @@ class Ground:
                 screen.blit(treepic, ((across*playersize)+startacr, (vert*playersize)+startver))
             elif self.data[index]=="1":
                 screen.blit(grasspic, ((across*playersize)+startacr, (vert*playersize)+startver))
-
+        pygame.display.flip()
+        pygame.image.save(screen, "background.bmp")
+        return startacr, startver
 
 
 
 
 ground=Ground()
 ground.createground()
-
-
+shiftx, shifty = ground.drawground()
+print(shiftx, shifty)
 player = Player()
 dx = 0
 dy = 0
@@ -100,21 +101,27 @@ while not done:
                 dx = 0
             elif event.key==pygame.K_s:
                 dy = 0
-
+    moved=0
     if dx == 1:
         player.move("right")
+        moved=1
     if dx == -1:
         player.move("left")
+        moved=1
     if dy == 1:
         player.move("down")
+        moved=1
     if dy == -1:
         player.move("up")
-    screen.fill((255, 255, 255))
-    ground.drawground()
-    pygame.draw.circle(screen, (0, 0, 0), ((playersize//2)+player.x, (playersize//2)+player.y), playersize//2)
+        moved=1
+    if moved:
+        time.sleep(0.5)
+    screen.fill([255, 255, 255])
+    screen.blit(pygame.image.load("background.bmp"), (0, 0))
+    pygame.draw.circle(screen, (0, 0, 0), (player.x+shiftx+(playersize//2), player.y+shifty+(playersize//2)), playersize//2)
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(30)
 
-
+os.remove("background.bmp")
 pygame.display.quit()
 pygame.quit()
