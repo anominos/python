@@ -34,9 +34,9 @@ class Player:
     def checkgroud(self):
         pass
 
-class Ground:#binary-representing-like
+class Ground:
     def __init__(self):
-        self.data = "0"  #formatted: length of width (2 digits), width (length of width digits), data (len(data)//width(<- heigth) * width)
+        self.data = "0" 
         self.width = 0
     def createground(self):
         random1 = 1001110100
