@@ -14,24 +14,26 @@ def displaytext(t, pos):
 playersize = 50
 treepic = pygame.image.load("tree.bmp")
 grasspic = pygame.image.load("grass.bmp")
-
-
+treepic=pygame.transform.scale(treepic, (screenwidth//3, screenheight//3))
+grasspic=pygame.transform.scale(grasspic, (screenwidth//3, screenheight//3))
 
 class Player:
     def __init__(self):
-        self.x = 0
-        self.y = 0
+        self.x = 1
+        self.y = 1
     def move(self, direction):
         if direction=="up":
-            self.y-=playersize
+            self.y-=1
         elif direction == "down":
-            self.y+=playersize
+            self.y+=1
         elif direction=="left":
-            self.x-=playersize
+            self.x-=1
         elif direction=="right":
-            self.x+=playersize
-    def checkgroud(self):
-        pass
+            self.x+=1
+    def getground(self):
+        first=ground.data[self.x+(self.y*ground.width)]
+
+        return first
 
 class Ground:
     def __init__(self):
@@ -67,15 +69,24 @@ class Ground:
         return startacr, startver
 
 
-
-
 ground=Ground()
 ground.createground()
 shiftx, shifty = ground.drawground()
-print(shiftx, shifty)
+
 player = Player()
 dx = 0
 dy = 0
+
+def moveplayer(a, b, reverse=1):
+    if a == 1*reverse:
+        player.move("right")
+    if a == -1*reverse:
+        player.move("left")
+    if b == 1*reverse:
+        player.move("down")
+    if b == -1*reverse:
+        player.move("up")
+
 while not done:
     moved=False
     for event in pygame.event.get():
@@ -102,23 +113,20 @@ while not done:
             elif event.key==pygame.K_s:
                 dy = 0
     moved=0
-    if dx == 1:
-        player.move("right")
+    if any([dx, dy]):
         moved=1
-    if dx == -1:
-        player.move("left")
-        moved=1
-    if dy == 1:
-        player.move("down")
-        moved=1
-    if dy == -1:
-        player.move("up")
-        moved=1
+        moveplayer(dx, dy)
+
+    if player.getground()=="2":
+        moved=0
+        moveplayer(dx,dy,-1)
+
+
     if moved:
         time.sleep(0.5)
     screen.fill([255, 255, 255])
     screen.blit(pygame.image.load("background.bmp"), (0, 0))
-    pygame.draw.circle(screen, (0, 0, 0), (player.x+shiftx+(playersize//2), player.y+shifty+(playersize//2)), playersize//2)
+    pygame.draw.circle(screen, (0, 0, 0), (player.x*playersize+shiftx+(playersize//2), player.y*playersize+shifty+(playersize//2)), playersize//2)
     pygame.display.flip()
     clock.tick(30)
 
